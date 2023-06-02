@@ -13,10 +13,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Coyote" Version="1.7.7" />
-    <PackageReference Include="Microsoft.Coyote.Test" Version="1.7.7" />
+    <ProjectReference Include="..\..\..\..\coyote\Source\Core\Core.csproj" />
+    <ProjectReference Include="..\..\..\..\coyote\Source\Test\Test.csproj" />
+    <!-- <PackageReference Include="Microsoft.Coyote" Version="1.7.7" />
+    <PackageReference Include="Microsoft.Coyote.Test" Version="1.7.7" /> -->
     <PackageReference Include="Microsoft.Extensions.Logging" Version="$(MicrosoftExtensionsLoggingPkgVer)" />
     <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="7.0.0-preview.7.22375.6" Condition="$(TargetFramework) == 'net7.0'" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
+    <ProjectReference Include="..\..\..\..\coyote\Tests\Tests.Common\Tests.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

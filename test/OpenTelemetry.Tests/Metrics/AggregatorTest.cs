@@ -14,20 +14,34 @@
 // limitations under the License.
 // </copyright>
 
+#pragma warning disable SA1202
+#pragma warning disable SA1306
+#pragma warning disable SA1515
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using Microsoft.Coyote;
 using Microsoft.Coyote.Logging;
+#if NET7_0
+using Microsoft.Coyote.Tests.Common;
+#endif
 using Microsoft.Coyote.SystematicTesting;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace OpenTelemetry.Metrics.Tests
 {
     public class AggregatorTest
     {
+        private readonly ITestOutputHelper TestOutput;
         private readonly AggregatorStore aggregatorStore = new("test", AggregationType.Histogram, AggregationTemporality.Cumulative, 1024, Metric.DefaultHistogramBounds);
+
+        public AggregatorTest(ITestOutputHelper output)
+        {
+            this.TestOutput = output;
+        }
 
         [Fact]
         public void HistogramDistributeToAllBucketsDefault()
@@ -143,13 +157,22 @@ namespace OpenTelemetry.Metrics.Tests
         [Fact]
         public void MultithreadedLongHistogramTest_Coyote()
         {
+#if NET7_0
+            using var logger = new TestOutputLogger(this.TestOutput);
+#endif
+            var replayTrace = System.IO.File.ReadAllText(@"D:\repos\opentelemetry-dotnet\test\OpenTelemetry.Tests\bin\Debug\net7.0\MultithreadedLongHistogramTest_Coyote.trace");
             var config = Configuration.Create()
-                        .WithTestingIterations(100)
+                        .WithReproducibleTrace(replayTrace)
+                        // .WithTestingIterations(100)
                         .WithVerbosityEnabled(VerbosityLevel.Debug)
-                        .WithConsoleLoggingEnabled()
+                        // .WithConsoleLoggingEnabled()
+                        .WithControlFlowRaceCheckingEnabled()
                         .WithPartiallyControlledConcurrencyAllowed(false);
 
             var test = TestingEngine.Create(config, this.MultiThreadedHistogramUpdateAndSnapShotTest);
+#if NET7_0
+            test.SetLogger(logger);
+#endif
 
             test.Run();
             Console.WriteLine(test.GetReport());

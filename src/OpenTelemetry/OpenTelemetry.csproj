@@ -17,6 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\coyote\Source\Core\Core.csproj" />
     <PackageReference Include="System.Collections.Immutable" Version="$(SystemCollectionsImmutablePkgVer)" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="$(SystemReflectionEmitLightweightPkgVer)" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="$(MicrosoftExtensionsLoggingPkgVer)" />
